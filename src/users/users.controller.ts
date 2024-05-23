@@ -3,7 +3,7 @@ import { UsersService } from './users.service';
 
 @Controller('users') // handle '/users' route
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(private readonly usersService: UsersService) { }
 
   /*
   PATCH '/users/:id'
@@ -30,7 +30,7 @@ export class UsersController {
 
   @Patch(':id') // UPDATE USER BY THE ROUTE: 'users/:id'
   update(@Param('id') id: string, @Body() userUpdate: { name: string, email: string, role: 'INTERN' | 'ENGINEER' | 'ADMIN' }) {
-    return { id, ...userUpdate };
+    return this.usersService.update(+id, userUpdate);
   }
 
   @Delete(':id') // UPDATE USER BY THE ROUTE: 'users/:id'

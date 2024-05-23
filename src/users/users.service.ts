@@ -48,10 +48,10 @@ export class UsersService {
 
   update(id: number, updatedUser: { name?: string, email?: string, role?: 'INTERN' | 'ENGINEER' | 'ADMIN' }) {
     this.users = this.users.map(user => {
-      if(user.id === id) {
-        return {...user, ...updatedUser}
+      if (user.id === id) {
+        return { ...user, ...updatedUser }
       }
-      return  
+      return user
     })
 
     return this.findOne(id)
@@ -60,6 +60,6 @@ export class UsersService {
   delete(id: number) {
     const removedUser = this.findOne(id)
     this.users = this.users.filter(user => user.id !== id)
-    return removedUser;
+    return removedUser
   }
 }
