@@ -1,65 +1,75 @@
 import { Injectable } from '@nestjs/common';
+import { CreateUserDto } from './dto/create-user-dto';
+import { UpdateUserDto } from './dto/update-user-dto';
+import { NotFoundException } from '@nestjs/common';
 
 @Injectable()
 export class UsersService {
   private users = [
     {
-      "id": 1,
-      "name": "Guilherme Oliveira",
-      "email": "guilherme@net.com.br",
-      "role": "ENGINEER",
+      id: 1,
+      name: 'Guilherme Oliveira',
+      email: 'guilherme@net.com.br',
+      role: 'ENGINEER',
     },
     {
-      "id": 2,
-      "name": "Patricia",
-      "email": "Patricia@net.com.br",
-      "role": "ADMIN",
+      id: 2,
+      name: 'Patricia',
+      email: 'Patricia@net.com.br',
+      role: 'ADMIN',
     },
     {
-      "id": 3,
-      "name": "Phelipe",
-      "email": "Phelipe@net.com.br",
-      "role": "INTERN",
-    }
-  ]
+      id: 3,
+      name: 'Phelipe',
+      email: 'Phelipe@net.com.br',
+      role: 'INTERN',
+    },
+  ];
 
   findAll(role?: 'INTERN' | 'ENGINEER' | 'ADMIN') {
     if (role) {
-      return this.users.filter(user => user.role === role)
+      const rolesArray = this.users.filter((user) => user.role === role);
+      if (rolesArray.length === 0) {
+        throw new NotFoundException('User role not found');
+      }
+      return rolesArray;
     }
-    return this.users
+    return this.users;
   }
 
   findOne(id: number) {
-    const user = this.users.find(user => user.id === id)
+    const user = this.users.find((user) => user.id === id);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
 
-    return user
+    return user;
   }
 
-  create(user: { name: string, email: string, role: 'INTERN' | 'ENGINEER' | 'ADMIN' }) {
-    const usersByHighestId = [...this.users].sort((a, b) => b.id - a.id)
+  create(createUserDto: CreateUserDto) {
+    const usersByHighestId = [...this.users].sort((a, b) => b.id - a.id);
     const newUser = {
       id: usersByHighestId[0].id + 1,
-      ...user
-    }
-    this.users.push(newUser)
-    return newUser
+      ...createUserDto,
+    };
+    this.users.push(newUser);
+    return newUser;
   }
 
-  update(id: number, updatedUser: { name?: string, email?: string, role?: 'INTERN' | 'ENGINEER' | 'ADMIN' }) {
-    this.users = this.users.map(user => {
+  update(id: number, updateUserDto: UpdateUserDto) {
+    this.users = this.users.map((user) => {
       if (user.id === id) {
-        return { ...user, ...updatedUser }
+        return { ...user, ...updateUserDto };
       }
-      return user
-    })
+      return user;
+    });
 
-    return this.findOne(id)
+    return this.findOne(id);
   }
 
   delete(id: number) {
-    const removedUser = this.findOne(id)
-    this.users = this.users.filter(user => user.id !== id)
-    return removedUser
+    const removedUser = this.findOne(id);
+    this.users = this.users.filter((user) => user.id !== id);
+    return removedUser;
   }
 }
